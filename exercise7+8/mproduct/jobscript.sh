@@ -29,6 +29,6 @@ do
 $n
 4
 EOF
-echo -e "$n \t$(awk '/Elapsed/ {print $4}' matrices.out) \t$(awk '/Elapsed/ {print $9}' matrices.out)" >> matrices.dat
+echo -e "$n \t$(awk '/Elapsed/ {print $4}' matrices.out) \t$(awk '/Elapsed/ {print $8}' matrices.out)" >> matrices.dat
 rm matrices.out
 done
