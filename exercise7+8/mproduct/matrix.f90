@@ -1,26 +1,41 @@
 MODULE matrix
     PRIVATE
-    PUBLIC :: makematrices, multiplicate, trace, dummy
+    PUBLIC :: makea, makeb, multiplicate, dummy
 
     contains
-    SUBROUTINE makematrices (a,b,n)
+    FUNCTION makea (n) result(a)
         IMPLICIT NONE
         INTEGER, INTENT(IN) :: n
         INTEGER :: i,j
         REAL :: nr
         REAL, PARAMETER :: pi= acos(-1.0)
-        REAL, DIMENSION(:,:), ALLOCATABLE:: a,b
+        REAL, DIMENSION(1:n,1:n):: a
 
-        ALLOCATE(a(1:n,1:n),b(1:n,1:n))
         nr = n
         
         DO i=1, n 
             DO j=1, n 
-                a(i,j)= sin(2*pi*i*j/nr) 
-                b(i,j)= cos(2*pi*i*j/nr)
+                a(i,j)= sin(2*pi*i*j/nr)    
              END DO
         END DO
-    END SUBROUTINE makematrices
+    END FUNCTION makea
+
+    FUNCTION makeb (n) result(b)
+        IMPLICIT NONE
+        INTEGER, INTENT(IN) :: n
+        INTEGER :: i,j
+        REAL :: nr
+        REAL, PARAMETER :: pi= acos(-1.0)
+        REAL, DIMENSION(1:n,1:n):: b
+
+        nr = n
+        
+        DO i=1, n 
+            DO j=1, n 
+                b(i,j)= cos(2*pi*i*j/nr)
+            END DO
+        END DO
+    END FUNCTION makeb
 
     FUNCTION multiplicate (a,b,n) result (c)
         IMPLICIT NONE
@@ -37,20 +52,6 @@ MODULE matrix
             END DO    
         END DO
     END FUNCTION multiplicate
-
-    FUNCTION trace(a,n) result (tr)
-        IMPLICIT NONE
-        INTEGER, INTENT(IN) :: n
-        INTEGER :: i
-        REAL :: tr
-        REAL, DIMENSION(1:n,1:n), INTENT(IN):: a
-
-        tr = 0
-        DO i=1, n
-            tr = tr + a(i,i)
-        END DO
-    
-    END FUNCTION trace
 
     SUBROUTINE dummy (a,b,n)
         IMPLICIT NONE
