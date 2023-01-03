@@ -5,63 +5,37 @@ MODULE read
 
     CONTAINS 
 
-    SUBROUTINE readtrr (filename, input, numl, *)
+    SUBROUTINE readtrr (filename,nframes,nmols,nsites,input)
+        IMPLICIT NONE
         CHARACTER(LEN=200), INTENT(IN) :: filename
-        CHARACTER(LEN=200) :: line
-        INTEGER :: numl, ios, b, e, i
-        REAL, DIMENSION(:,:), ALLOCATABLE :: input
-        LOGICAL :: ifxst, ifat, ifhash
+        CHARACTER(LEN=4) :: SOL,site
+        INTEGER, INTENT(IN):: nframes,nmols,nsites
+        INTEGER :: i,j,k,ios,index
+        REAL, DIMENSION(:,:,:), ALLOCATABLE :: input
 
     
+        ALLOCATE(input(1:nmols,1:nsites,1:3))
 
-        INQUIRE(file=filename,exist=ifxst)
-        IF(.not.ifxst) THEN
-            WRITE(*,*) "File does not exist. Program aborted!"
-            RETURN 1
-        END IF
-        
-        OPEN(1, file=filename, status="OLD")
-        b = 0
+        OPEN(1, FILE = filename, IOSTAT = ios, STATUS = "OLD")
 
-        DO
-            READ(1, '(a)', IOSTAT=ios) line
-            IF(ios > 0) THEN
-                WRITE(*,*) "Reading file failed. Program aborted!"
-                RETURN 1
-            ELSE IF (ios < 0) THEN
-                WRITE(*,*) "File has no data. Program aborted!"
-                RETURN 1
-            END IF
 
-            ifat = line(1:1)/="@"
-            ifhash = line(1:1)/="#"
-            IF(ifhash.AND.ifat) EXIT
-            b = b + 1
-        END DO
+            READ(1,IOSTAT = ios) 
+            READ(1,IOSTAT = ios) 
 
-        e = b
+            DO j=1, nmols
+                
+                DO k=1, nsites
 
-        DO
-            e = e + 1
-            READ(1,*,  IOSTAT=ios) line
-            IF (ios<0) EXIT
-        END DO
+                    READ(1,IOSTAT = ios) SOL, site, index, input(j,k,1), input(j,k,2), input(j,k,3)
+
+                END DO
+
+            END DO
+
+            READ(1,IOSTAT = ios)
+
         CLOSE(1)
         
-        numl = e - b
-        
-        ALLOCATE(input(1:numl,2))
-
-        OPEN(2, file=filename, status="OLD")
-        
-        DO i=1, b
-            READ(2,*) line
-        END DO
-
-        DO i=1, numl
-            READ(2,*) input(i,1), input(i,2)
-        END DO
-        CLOSE(2)
 
 
     END SUBROUTINE readtrr
