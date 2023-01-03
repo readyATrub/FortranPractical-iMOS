@@ -3,11 +3,11 @@ PROGRAM diffusion
     IMPLICIT NONE
 
     CHARACTER(LEN=200) :: filename
-    INTEGER :: nframes, nmols, nsites,dim,j,k,ios
+    INTEGER :: nframes, nmols, nsites,i,j,k,ios
     REAL :: dt
-    REAL, DIMENSION(:,:,:), ALLOCATABLE :: input
+    REAL, DIMENSION(:,:,:,:), ALLOCATABLE :: input
     
-    PRINT '("Enter trajectory file:")'
+    PRINT '("Enter trajectory file (in quotation marks):")'
     READ(*,*) filename
     PRINT '("Enter number of water molecules:")'
     READ(*,*) nmols
@@ -23,18 +23,22 @@ PROGRAM diffusion
 
     OPEN(2, FILE = "test.xvg", IOSTAT = ios, STATUS = "UNKNOWN")
 
-        
-    DO j=1, nmols
+    !DO loop for printing out data extracted from trr
+
+!DO i=1,3 
+    !DO j=1, nmols
                 
-        DO k=1, nsites
+        !DO k=1, nsites
 
-            WRITE(2,IOSTAT = ios) input(j,k,1), input(j,k,2), input(j,k,3)
+            !WRITE(2,*,IOSTAT = ios) input(i,j,k,1), input(i,j,k,2), input(i,j,k,3)
 
-        END DO
+        !END DO
 
-    END DO    
-    CLOSE(2)
+    !END DO   
+    !WRITE(2,*,IOSTAT = ios) 
+!END DO
+    1CLOSE(2)
 
-
+    DEALLOCATE(input)
 
 END PROGRAM diffusion
