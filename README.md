@@ -5,6 +5,6 @@ This repository is for storing and sharing the codes for the "Programming in For
 To do:
 
 -comments 
--exercise 8.2 missing (code so far doesn't work)
--reworking of some solved exercises
+-exercise 8.2 uner construction
+-reworking of some solved exercises (in particular 7.4)
 -fixing exercise 7.5 (DGEMM)
