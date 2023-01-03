@@ -5,5 +5,5 @@ This repository is for storing and sharing the codes for the "Programming in For
 To do:
 
 -comments 
--exercise 8.2
+-exercise 8.2 (code so far doesn't work)
 -reworking of some solved exercises
