@@ -1,0 +1,9 @@
+.vscode
+**/.vscode
+*.o
+*.mod
+*.gro
+**/nohup.out
+exercise7+8/diffusion/test.xvg
+
+
