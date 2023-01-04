@@ -4,6 +4,7 @@
 *.mod
 *.gro
 **/nohup.out
+*.log
 exercise7+8/diffusion/test.xvg
 
 
