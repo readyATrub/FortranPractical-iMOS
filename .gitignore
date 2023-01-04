@@ -5,6 +5,8 @@
 *.gro
 **/nohup.out
 *.log
+exercise7+8/diffusion/equations.f90
 exercise7+8/diffusion/test.xvg
+
 
 
