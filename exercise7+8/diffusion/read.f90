@@ -20,7 +20,7 @@ MODULE read
 
         OPEN(1, FILE = filename , STATUS = "OLD")
             
-        DO i=1, nmols
+        DO i=1, nframes
             
             READ(1,*,IOSTAT = ios) 
             READ(1,*,IOSTAT = ios)
