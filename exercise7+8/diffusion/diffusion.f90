@@ -1,10 +1,11 @@
 PROGRAM diffusion
     USE read
+    USE equations
     IMPLICIT NONE
 
     CHARACTER(LEN=200) :: filename
     INTEGER :: nframes, nmols, nsites,i,j,k,ios
-    REAL :: dt
+    REAL :: dt,dcoeff
     REAL, DIMENSION(:,:,:,:), ALLOCATABLE :: input
     
     PRINT '("Enter trajectory file (in quotation marks):")'
@@ -21,23 +22,27 @@ PROGRAM diffusion
 
     CALL readtrr(filename,nframes,nmols,nsites,input)
 
-    OPEN(2, FILE = "test.xvg", IOSTAT = ios, STATUS = "UNKNOWN")
+    CALL einstein (nframes,nmols,nsites,dt,input,dcoeff)
+
+    WRITE(*,*) "The diffusion constant is", dcoeff
 
     !DO loop for printing out data extracted from trr
 
-!DO i=1,3 
-    !DO j=1, nmols
+    !OPEN(2, FILE = "test.xvg", IOSTAT = ios, STATUS = "UNKNOWN")
+
+    !DO i=1,3 
+        !DO j=1, nmols
                 
-        !DO k=1, nsites
+            !DO k=1, nsites
 
-            !WRITE(2,*,IOSTAT = ios) input(i,j,k,1), input(i,j,k,2), input(i,j,k,3)
+                !WRITE(2,*,IOSTAT = ios) input(i,j,k,1), input(i,j,k,2), input(i,j,k,3)
 
-        !END DO
+            !END DO
 
-    !END DO   
-    !WRITE(2,*,IOSTAT = ios) 
-!END DO
-    1CLOSE(2)
+        !END DO   
+        !WRITE(2,*,IOSTAT = ios) 
+    !END DO
+    !CLOSE(2)
 
     DEALLOCATE(input)
 
