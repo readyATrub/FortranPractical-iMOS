@@ -1,10 +1,10 @@
 .vscode
 **/.vscode
-*.o
-*.mod
-*.gro
+**/*.o
+**/*.mod
+**/*.gro
 **/nohup.out
-*.log
+**/*.log
 exercise7+8/diffusion/equations.f90
 exercise7+8/diffusion/test.xvg
 
