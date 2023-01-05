@@ -4,8 +4,8 @@ PROGRAM diffusion
     IMPLICIT NONE
 
     CHARACTER(LEN=200) :: filename
-    INTEGER :: nframes, nmols, nsites,i,j,k,ios
-    REAL :: dt,dcoeff
+    INTEGER :: nsteps, nframes, nmols, nsites,i,j,k,ios
+    REAL :: dt,dcoeff,startf,endf
     REAL, DIMENSION(:,:,:,:), ALLOCATABLE :: input
     
     PRINT '("Enter trajectory file (in quotation marks):")'
@@ -14,17 +14,22 @@ PROGRAM diffusion
     READ(*,*) nmols
     PRINT '("Enter number of sites:")'
     READ(*,*) nsites
-    PRINT '("Enter number of frames:")'
-    READ(*,*) nframes
+    PRINT '("Enter number of time steps:")'
+    READ(*,*) nsteps
     PRINT '("Enter time step size:")'
     READ(*,*) dt
+    PRINT '("Enter start of fit")'
+    READ(*,*) startf
+    PRINT '("Enter end of fit")'
+    READ(*,*) endf
 
+    nframes = nsteps + 1
 
     CALL readtrr(filename,nframes,nmols,nsites,input)
 
-    CALL einstein (nframes,nmols,nsites,dt,input,dcoeff)
+    CALL einstein (nsteps,nframes,nmols,nsites,dt,input,startf,endf,dcoeff)
 
-    WRITE(*,*) "The diffusion constant is", dcoeff
+    PRINT*, "The diffusion constant is", dcoeff, "cm^2/s"
 
     !DO loop for printing out data extracted from trr
 

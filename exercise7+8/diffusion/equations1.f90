@@ -5,51 +5,39 @@ MODULE equations
 
     CONTAINS
 
-    SUBROUTINE einstein (nframes,nmols,nsites,dt,input,dcoeff)
+    SUBROUTINE einstein (nsteps,nframes,nmols,nsites,dt,input,startf,endf,dcoeff)
         IMPLICIT NONE
-        INTEGER, INTENT(IN) :: nframes,nmols,nsites
-        REAL, INTENT(IN) :: dt
+        INTEGER, INTENT(IN) :: nsteps, nframes,nmols,nsites
+        REAL, INTENT(IN) :: dt,startf,endf
         REAL, DIMENSION(1:nframes,1:nmols,1:nsites,1:3), INTENT(IN) :: input
         REAL, DIMENSION(:,:,:), ALLOCATABLE :: ratom
-        REAL, DIMENSION(:,:), ALLOCATABLE :: rmol
-        REAL :: msdev,dcoeff
-        INTEGER :: i,j,k
+        REAL :: msd,dcoeff
+        INTEGER :: i,j,k,startstep,endstep
         
-        ALLOCATE(rmol(1:2,1:nmols),ratom(1:2,1:nmols,1:nsites))
+        ALLOCATE(ratom(1:2,1:nmols,1:nsites))
 
-        
-        msdev = 0
+        startstep = (startf/dt)+1
+        endstep = (endf/dt)+1
+        msd = 0.0
 
         DO j=1, nmols
 
-            rmol(1,j) = 0
-            rmol(2,j) = 0
-
             DO k=1, nsites
-            ratom(1,j,k) = sqrt(input(5000,j,k,1)**2+input(5000,j,k,2)**2+input(5000,j,k,3)**2)
-            ratom(2,j,k) = sqrt(input(nframes,j,k,1)**2+input(nframes,j,k,2)**2+input(nframes,j,k,3)**2)
 
-            rmol(1,j) = rmol(1,j) + ratom(1,j,k)
-            rmol(2,j) = rmol(2,j) + ratom(2,j,k)
+            ratom(1,j,k) = sqrt(input(startstep,j,k,1)**2+input(startstep,j,k,2)**2+input(startstep,j,k,3)**2)
+            ratom(2,j,k) = sqrt(input(endstep,j,k,1)**2+input(endstep,j,k,2)**2+input(endstep,j,k,3)**2)
+            
+            msd = msd + ABS(ratom(2,j,k)-ratom(1,j,k))**2.0
 
             END DO
 
-            rmol(1,j) = rmol(1,j)/nsites
-            rmol(2,j) = rmol(2,j)/nsites
-
-            !rmol(1,j) = (ratom(1,j,2)+ratom(1,j,3))/2.0
-            !rmol(2,j) = (ratom(2,j,2)+ratom(2,j,3))/2.0
-
-            msdev = msdev + ABS(rmol(2,j)-rmol(1,j))**2
-
-
         END DO
 
-        msdev = msdev/nmols
+        msd = msd/(nmols*nsites)
 
-        dcoeff = msdev/(2.0*dt*(nframes-1.0))
+        dcoeff = (msd/(2.0*dt*(nsteps)))*10.0**(-2.0)
 
-        DEALLOCATE(ratom,rmol) 
+        DEALLOCATE(ratom) 
 
     END SUBROUTINE einstein
 
