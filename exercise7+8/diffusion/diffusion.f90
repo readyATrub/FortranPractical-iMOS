@@ -6,7 +6,7 @@ PROGRAM diffusion
     CHARACTER(LEN=200) :: filename
     INTEGER :: nsteps, nframes, nmols, nsites,i,j,k,ios
     REAL :: dt,dcoeff,startf,endf
-    REAL, DIMENSION(:,:,:,:), ALLOCATABLE :: input
+    REAL, DIMENSION(:,:,:,:), ALLOCATABLE :: inputr, inputv
     
     PRINT '("Enter trajectory file (in quotation marks):")'
     READ(*,*) filename
@@ -25,9 +25,9 @@ PROGRAM diffusion
 
     nframes = nsteps + 1
 
-    CALL readtrr(filename,nframes,nmols,nsites,input)
+    CALL readtrr(filename,nframes,nmols,nsites,inputr,inputv)
 
-    CALL einstein (nsteps,nframes,nmols,nsites,dt,input,startf,endf,dcoeff)
+    CALL greenkubo (nsteps,nframes,nmols,nsites,dt,inputv,startf,endf,dcoeff)
 
     PRINT*, "The diffusion constant is", dcoeff, "cm^2/s"
 
@@ -49,6 +49,6 @@ PROGRAM diffusion
     !END DO
     !CLOSE(2)
 
-    DEALLOCATE(input)
+    DEALLOCATE(inputr,inputv)
 
 END PROGRAM diffusion
