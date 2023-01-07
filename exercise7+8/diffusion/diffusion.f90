@@ -4,6 +4,7 @@ PROGRAM diffusion
     IMPLICIT NONE
 
     CHARACTER(LEN=200) :: filename
+    CHARACTER(LEN=1) :: s
     INTEGER :: nsteps, nframes, nmols, nsites,i,j,k,ios
     REAL :: dt,dcoeff,startf,endf
     REAL, DIMENSION(:,:,:,:), ALLOCATABLE :: inputr, inputv
@@ -18,19 +19,37 @@ PROGRAM diffusion
     READ(*,*) nsteps
     PRINT '("Enter time step size:")'
     READ(*,*) dt
-    PRINT '("Enter start of fit")'
-    READ(*,*) startf
-    PRINT '("Enter end of fit")'
-    READ(*,*) endf
+    PRINT '("Enter method of computation:")'
+    PRINT '("(1 for Einstein)")'
+    PRINT '("(2 for Green-Kubo)")'
+    READ(*,*) s
 
     nframes = nsteps + 1
 
-    CALL readtrr(filename,nframes,nmols,nsites,inputr,inputv)
+    SELECT CASE(s)
+        CASE("1")
 
-    CALL greenkubo (nsteps,nframes,nmols,nsites,dt,inputv,startf,endf,dcoeff)
+            PRINT '("Enter start of fit")'
+            READ(*,*) startf
+            PRINT '("Enter end of fit")'
+            READ(*,*) endf
 
-    PRINT*, "The diffusion constant is", dcoeff, "cm^2/s"
+            CALL readtrr(filename,nframes,nmols,nsites,inputr,inputv)
+            CALL einstein (nsteps,nframes,nmols,nsites,dt,inputr,startf,endf,dcoeff)
+            PRINT*, "The diffusion constant is", dcoeff, "cm^2/s"
 
+        CASE("2")
+
+            CALL readtrr(filename,nframes,nmols,nsites,inputr,inputv)
+            CALL greenkubo (nframes,nmols,nsites,dt,inputv,dcoeff)
+            PRINT*, "The diffusion constant is", dcoeff, "cm^2/s"
+
+        CASE DEFAULT 
+
+            PRINT '("No method of computation chosen. Program aborted!")'
+        
+    END SELECT
+    
     !DO loop for printing out data extracted from trr
 
     !OPEN(2, FILE = "test.xvg", IOSTAT = ios, STATUS = "UNKNOWN")
