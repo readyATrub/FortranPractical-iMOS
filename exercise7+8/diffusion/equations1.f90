@@ -41,19 +41,16 @@ MODULE equations
 
     END SUBROUTINE einstein
 
-    SUBROUTINE greenkubo (nsteps,nframes,nmols,nsites,dt,inputv,startf,endf,dcoeff)
+    SUBROUTINE greenkubo (nframes,nmols,nsites,dt,inputv,dcoeff)
         IMPLICIT NONE
-        INTEGER, INTENT(IN) :: nsteps, nframes,nmols,nsites
-        REAL, INTENT(IN) :: dt,startf,endf
+        INTEGER, INTENT(IN) :: nframes,nmols,nsites
+        REAL, INTENT(IN) :: dt
         REAL, DIMENSION(1:nframes,1:nmols,1:nsites,1:3), INTENT(IN) :: inputv
-        REAL, DIMENSION(:,:,:), ALLOCATABLE :: vatom
         REAL, DIMENSION(:), ALLOCATABLE :: mp
         REAL :: dcoeff
-        INTEGER :: i,j,k,startstep,endstep
-        
-        startstep = (startf/dt)+1
-        endstep = (endf/dt)+1
-        ALLOCATE(vatom(1:2,1:nmols,1:nsites),mp(1:nframes))
+        INTEGER :: i,j,k,ios
+    
+        ALLOCATE(mp(1:nframes))
 
         dcoeff = 0.0
 
@@ -65,30 +62,31 @@ MODULE equations
 
                 DO k=1, nsites
 
-                    !vatom(1,j,k) = sqrt(inputv(1,j,k,1)**2+inputv(1,j,k,2)**2+inputv(1,j,k,3)**2)
-                    !vatom(2,j,k) = sqrt(inputv(i,j,k,1)**2+inputv(i,j,k,2)**2+inputv(i,j,k,3)**2)
-            
-                    !mp(i) = mp(i) + vatom(1,j,k)*vatom(2,j,k)
-                    mp(i) = mp(i) + sqrt(inputv(1,j,k,1)**2+inputv(1,j,k,2)**2+inputv(1,j,k,3)**2) &
-                    * sqrt(inputv(i,j,k,1)**2+inputv(i,j,k,2)**2+inputv(i,j,k,3)**2)
-
-                    !mp(i) = mp(i) + ABS(inputv(1,j,k,1)*inputv(i,j,k,1))+&
-                    !ABS(inputv(1,j,k,2)*inputv(i,j,k,2))+ABS(inputv(1,j,k,3)*inputv(i,j,k,3))
-
+                    mp(i) = mp(i) + inputv(1,j,k,1)*inputv(i,j,k,1) + &
+                    inputv(1,j,k,2)*inputv(i,j,k,2)+inputv(1,j,k,3)*inputv(i,j,k,3)
 
                 END DO
-
+            
             END DO
 
-        mp(i) = mp(i)/(nmols*nsites)
-
-        dcoeff = dcoeff + mp(i) * dt
+            mp(i) = mp(i)/(nmols*nsites)
+            dcoeff = dcoeff + (mp(i)/mp(1)) * dt 
 
         END DO
 
-        dcoeff = (1.0/3.0)*dcoeff*10**(-2.0)
+        dcoeff = (1.0/3.0)*dcoeff*10**(-2.0) 
 
-        DEALLOCATE(vatom,mp) 
+        !Routine for printing out normalized velocity autocorelation function
+        !OPEN(2, FILE = "velacc.dat", IOSTAT = ios, STATUS = "UNKNOWN")
+
+        !DO i=1 , nsteps, 1
+            !WRITE(2,*,IOSTAT = ios) dt*(i-1), mp(i)/mp(1)
+
+        !END DO
+
+        !CLOSE(2)
+
+        DEALLOCATE(mp) 
 
     END SUBROUTINE greenkubo
 
