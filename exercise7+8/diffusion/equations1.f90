@@ -48,7 +48,7 @@ MODULE equations
         REAL, DIMENSION(1:nframes,1:nmols,1:nsites,1:3), INTENT(IN) :: inputv
         REAL, DIMENSION(:), ALLOCATABLE :: mp
         REAL :: dcoeff
-        INTEGER :: i,j,k,ios
+        INTEGER :: i,j,k,l,ios
     
         ALLOCATE(mp(1:nframes))
 
@@ -62,8 +62,11 @@ MODULE equations
 
                 DO k=1, nsites
 
-                    mp(i) = mp(i) + inputv(1,j,k,1)*inputv(i,j,k,1) + &
-                    inputv(1,j,k,2)*inputv(i,j,k,2)+inputv(1,j,k,3)*inputv(i,j,k,3)
+                    DO l=1, 3
+
+                        mp(i) = mp(i) + inputv(1,j,k,l)*inputv(i,j,k,l)
+
+                    END DO
 
                 END DO
             
