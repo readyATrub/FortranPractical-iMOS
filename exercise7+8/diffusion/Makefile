@@ -6,3 +6,7 @@ read.o: read.f90
 
 equations1.o: equations1.f90
 	gfortran -c equations1.f90 
+
+.PHONY: clean
+clean:
+	-rm -f *.o *.mod diffusion
