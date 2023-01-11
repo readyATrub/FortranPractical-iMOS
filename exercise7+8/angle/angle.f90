@@ -7,7 +7,7 @@ REAL, DIMENSION(:),ALLOCATABLE :: vector1, vector2
 REAL :: scalarproduct, x 
 REAL :: norm1, norm2
 REAL :: phi
-REAL, PARAMETER :: pi = 3.14159265359
+REAL, PARAMETER :: pi = acos(-1.0)
 
 WRITE(*,*) "Dimension of your vectors:"
 READ(*,*) dim
