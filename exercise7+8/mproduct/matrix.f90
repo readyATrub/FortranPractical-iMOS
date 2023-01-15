@@ -8,8 +8,8 @@ MODULE matrix
         INTEGER, INTENT(IN) :: n
         INTEGER :: i,j
         REAL :: nr
-        REAL, PARAMETER :: pi= acos(-1.0)
-        REAL, DIMENSION(:,:), ALLOCATABLE:: a,b
+        REAL(kind=8), PARAMETER :: pi= acos(-1.0)
+        REAL(kind=8), DIMENSION(:,:), ALLOCATABLE:: a,b
 
         ALLOCATE(a(1:n,1:n),b(1:n,1:n))
         nr = n
@@ -26,8 +26,8 @@ MODULE matrix
         IMPLICIT NONE
         INTEGER :: i,j,k
         INTEGER, INTENT(IN) :: n
-        REAL, DIMENSION(1:n,1:n), INTENT(IN):: a,b
-        REAL, DIMENSION(1:n,1:n) :: c
+        REAL(kind=8), DIMENSION(1:n,1:n), INTENT(IN):: a,b
+        REAL(kind=8), DIMENSION(1:n,1:n) :: c
         DO i=1, n
             DO j=1, n
                 c(i,j)=0
@@ -42,8 +42,8 @@ MODULE matrix
         IMPLICIT NONE
         INTEGER, INTENT(IN) :: n
         INTEGER :: i
-        REAL :: tr
-        REAL, DIMENSION(1:n,1:n), INTENT(IN):: a
+        REAL(kind=8) :: tr
+        REAL(kind=8), DIMENSION(1:n,1:n), INTENT(IN):: a
 
         tr = 0
         DO i=1, n
@@ -55,6 +55,6 @@ MODULE matrix
     SUBROUTINE dummy (a,b,n)
         IMPLICIT NONE
         INTEGER, INTENT(IN) :: n
-        REAL, DIMENSION(1:n,1:n), INTENT(IN):: a,b
+        REAL(kind=8), DIMENSION(1:n,1:n), INTENT(IN):: a,b
     END SUBROUTINE dummy
 END MODULE matrix

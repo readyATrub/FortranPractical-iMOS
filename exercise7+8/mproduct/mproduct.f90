@@ -6,7 +6,7 @@ PROGRAM mproduct
     INTEGER :: i,j,n, memory
     CHARACTER :: s
     REAL :: tr, start, end, tra, trb, memoryr
-    REAL, DIMENSION(:,:), ALLOCATABLE:: a,b,c
+    REAL(kind=8), DIMENSION(:,:), ALLOCATABLE:: a,b,c
 
     WRITE(*,*) "Side length of the to be generated matrices:"
     READ(*,*) n
