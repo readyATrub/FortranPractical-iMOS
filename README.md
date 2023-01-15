@@ -6,4 +6,4 @@ To do:
 
 -comments 
 -reworking of some solved exercises (in particular 7.4)
--fixing exercise 7.5 (DGEMM)
+-fixing exercise 8.2
