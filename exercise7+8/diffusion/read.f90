@@ -11,12 +11,13 @@ MODULE read
         CHARACTER(LEN=4) :: SOL,site
         INTEGER, INTENT(IN):: nframes,nmols,nsites
         INTEGER :: i,j,k,ios,index
-        REAL, DIMENSION(:,:,:,:), ALLOCATABLE :: inputr, inputv
+        REAL, DIMENSION(:,:,:), ALLOCATABLE :: inputr, inputv
 
 
     
-        ALLOCATE(inputr(1:nframes,1:nmols,1:nsites,1:3),inputv(1:nframes,1:nmols,1:nsites,1:3))
+        ALLOCATE(inputr(1:3,nmols*nsites,nframes),inputv(1:3,nmols*nsites,nframes))
 
+        !OPEN(2, FILE = "test.xvg", IOSTAT = ios, STATUS = "UNKNOWN")
         OPEN(1, FILE = filename , STATUS = "OLD")
             
         DO i=1, nframes
@@ -24,16 +25,12 @@ MODULE read
             READ(1,*,IOSTAT = ios) 
             READ(1,*,IOSTAT = ios)
 
-            DO j=1, nmols
+            DO j=1, nmols*nsites
                 
-                DO k=1, nsites
 
                     READ(1,*,IOSTAT = ios) SOL, site, index, &
-                    inputr(i,j,k,1), inputr(i,j,k,2), inputr(i,j,k,3), &
-                    inputv(i,j,k,1), inputv(i,j,k,2), inputv(i,j,k,3)
-
-                END DO
-
+                    inputr(1:3,j,i) ,inputv(1:3,j,i)
+                    !WRITE(2,*,IOSTAT = ios) inputr(1:3,j,i),inputv(1:3,j,i)
             END DO
 
             READ(1,*,IOSTAT = ios)
@@ -41,6 +38,7 @@ MODULE read
         END DO
 
         CLOSE(1)
+        !CLOSE(2)
         
     END SUBROUTINE readtrr
 
