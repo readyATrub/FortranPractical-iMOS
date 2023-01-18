@@ -15,14 +15,15 @@ MODULE potential
         IMPLICIT NONE
         REAL, INTENT(IN) :: x
         REAL :: force
-        force = -24.0*((-2.0/x**(13.0))+(1.0/x**(7.0)))
+        force = -1.0*((-48.0*(x**(-13.0)))+(24.0*(x**(-7.0))))
     END FUNCTION f
 
     FUNCTION tdf (x) result(tiderivf)
         IMPLICIT NONE
         REAL, INTENT(IN) :: x
         REAL :: tiderivf
-        tiderivf = -24.0*((26.0/x**(14.0))-(7/x**(8.0)))
+        !tiderivf = 24.0*(-26.0*(x**(-14.0))+7.0*(x**(-8.0)))
+        tiderivf = (-4*(((12*13)/(x**14))-((6*7)/(x**8))))
     END FUNCTION tdf
 
     FUNCTION tdf2 (x) result(tiderivf2)
