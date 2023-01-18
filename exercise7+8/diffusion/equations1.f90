@@ -5,91 +5,115 @@ MODULE equations
 
     CONTAINS
 
-    SUBROUTINE einstein (nsteps,nframes,nmols,nsites,dt,inputr,startf,endf,dcoeff)
+    SUBROUTINE einstein (nsteps,nframes,nmols,nsites,dt,inputr,startf,endf,deltatres,dcoeff)
         IMPLICIT NONE
         INTEGER, INTENT(IN) :: nsteps, nframes,nmols,nsites
-        REAL, INTENT(IN) :: dt,startf,endf
-        REAL, DIMENSION(1:nframes,1:nmols,1:nsites,1:3), INTENT(IN) :: inputr
-        REAL, DIMENSION(:,:,:), ALLOCATABLE :: ratom
-        REAL :: msd,dcoeff
-        INTEGER :: i,j,k,startstep,endstep
+        REAL, INTENT(IN) :: dt,startf,endf,deltatres
+        REAL, DIMENSION(1:3,nmols*nsites,nframes), INTENT(IN) :: inputr
+        REAL, DIMENSION(:), ALLOCATABLE :: msd
+        REAL :: dcoeff,diff
+        INTEGER :: i,j,k,l,startstep,endstep,stepdiffs,stepsize,deltat,ios
+
+        startstep = (startf/deltatres)+1
+        endstep = (endf/deltatres)+1
+        stepdiffs = endstep-startstep
+        stepsize= (deltatres/dt)
+        ALLOCATE(msd(1:(nsteps/stepsize)+1))
+        deltat = 0.0
+        dcoeff = 0.0
+
+        OPEN(3, FILE = "MSD.xvg", IOSTAT = ios, STATUS = "UNKNOWN")
+        DO i = 1, (nframes/stepsize)+1
         
-        ALLOCATE(ratom(1:2,1:nmols,1:nsites))
+            msd(i) = 0
+            DO j = 1, nframes-deltat
 
-        startstep = (startf/dt)+1
-        endstep = (endf/dt)+1
-        msd = 0.0
+                diff= 0.0
 
-        DO j=1, nmols
+                DO k = 1, nmols*nsites
 
-            DO k=1, nsites
+                    DO l = 1, 3
+                 
+                        diff = ABS(inputr(l,k,j+deltat) - inputr(l,k,j))**(2.0) +diff
 
-            ratom(1,j,k) = sqrt(inputr(startstep,j,k,1)**2+inputr(startstep,j,k,2)**2+inputr(startstep,j,k,3)**2)
-            ratom(2,j,k) = sqrt(inputr(endstep,j,k,1)**2+inputr(endstep,j,k,2)**2+inputr(endstep,j,k,3)**2)
-            
-            msd = msd + ABS(ratom(2,j,k)-ratom(1,j,k))**2.0
+                    END DO
+                        
+                END DO
+                msd(i) = msd(i)+diff/(nmols*nsites)
 
+                WRITE(*,*) i,j,deltat
             END DO
 
+            msd(i) = msd(i)/(nframes-deltat)
+            WRITE(3,*,IOSTAT = ios) deltat*dt, msd(i)
+            deltat = deltat + stepsize
+
+            
         END DO
+        CLOSE(3)
 
-        msd = msd/(nmols*nsites)
+        DO i=startstep, endstep
+        dcoeff = dcoeff + msd(i)
+        END DO
+        dcoeff = dcoeff/stepdiffs
 
-        dcoeff = (msd/(2.0*dt*(nsteps)))*10.0**(-2.0)
+        dcoeff = (dcoeff/(6.0*(endf-startf)))*10.0**(-2.0)
 
-        DEALLOCATE(ratom) 
+        DEALLOCATE(msd)
 
     END SUBROUTINE einstein
 
-    SUBROUTINE greenkubo (nframes,nmols,nsites,dt,inputv,dcoeff)
+    SUBROUTINE greenkubo (nsteps,nframes,nmols,nsites,dt,inputv,startf,endf,deltatres,dcoeff)
         IMPLICIT NONE
-        INTEGER, INTENT(IN) :: nframes,nmols,nsites
-        REAL, INTENT(IN) :: dt
-        REAL, DIMENSION(1:nframes,1:nmols,1:nsites,1:3), INTENT(IN) :: inputv
+        INTEGER, INTENT(IN) :: nsteps, nframes,nmols,nsites
+        REAL, INTENT(IN) :: dt,startf,endf,deltatres
+        REAL, DIMENSION(1:3,nmols*nsites,nframes), INTENT(IN) :: inputv
         REAL, DIMENSION(:), ALLOCATABLE :: mp
-        REAL :: dcoeff
-        INTEGER :: i,j,k,l,ios
-    
-        ALLOCATE(mp(1:nframes))
+        REAL :: dcoeff,p
+        INTEGER :: i,j,k,l,startstep,endstep,stepdiffs,stepsize,deltat,ios
 
+        startstep = (startf/deltatres)+1
+        endstep = (endf/deltatres)+1
+        stepdiffs = endstep-startstep
+        stepsize= (deltatres/dt)+1
+        ALLOCATE(mp(1:(nsteps/stepsize)+1))
+        deltat = 0.0
         dcoeff = 0.0
+        OPEN(4, FILE = "velacc.xvg", IOSTAT = ios, STATUS = "UNKNOWN")
+        DO i = 1, (nframes/stepsize)+1
+        
+            mp(i) = 0
+            DO j = 1, nframes-deltat
 
-        DO i=1, nframes
-            
-            mp(i) = 0.0
+                p= 0.0
 
-            DO j=1, nmols
+                DO k = 1, nmols*nsites
 
-                DO k=1, nsites
-
-                    DO l=1, 3
-
-                        mp(i) = mp(i) + inputv(1,j,k,l)*inputv(i,j,k,l)
+                    DO l = 1, 3
+                 
+                        p = inputv(l,k,j+deltat) * inputv(l,k,j) +p
 
                     END DO
-
+                        
                 END DO
-            
+                mp(i) = mp(i)+p/(nmols*nsites)
+                WRITE(*,*) i,j
             END DO
 
-            mp(i) = mp(i)/(nmols*nsites)
-            dcoeff = dcoeff + (mp(i)/mp(1)) * dt 
+            mp(i) = mp(i)/(nframes-deltat)
+            WRITE(4,*,IOSTAT = ios) deltat*dt, mp(i)
+            deltat = deltat + stepsize
 
+            
         END DO
+        CLOSE(4)
 
-        dcoeff = (1.0/3.0)*dcoeff*10**(-2.0) 
+        DO i=startstep, endstep
+        dcoeff = dcoeff + mp(i)/stepdiffs * deltatres
+        END DO
+        
 
-        !Routine for printing out normalized velocity autocorelation function
-        !OPEN(2, FILE = "velacc.dat", IOSTAT = ios, STATUS = "UNKNOWN")
-
-        !DO i=1 , nsteps, 1
-            !WRITE(2,*,IOSTAT = ios) dt*(i-1), mp(i)/mp(1)
-
-        !END DO
-
-        !CLOSE(2)
-
-        DEALLOCATE(mp) 
+        dcoeff = (dcoeff/3.0)*10.0**(-2.0)
 
     END SUBROUTINE greenkubo
 
