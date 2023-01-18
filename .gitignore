@@ -14,3 +14,4 @@ exercise7+8/diffusion/test.xvg
 *.pygstyle
 exercise7+8/diffusion/diffusion
 *.xvg
+*.mod
