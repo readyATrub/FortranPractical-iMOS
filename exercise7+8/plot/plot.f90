@@ -12,7 +12,7 @@ WRITE(*,*) "Step size dx:"
 READ(*,*) dx
 WRITE(*,*) "Number of steps:"
 READ(*,*) n
-ALLOCATE(output(1:n,1:n))
+ALLOCATE(output(1:n,1:2))
 
 DO i = 1, n
 output(i,1) = x
