@@ -1,25 +1,35 @@
 PROGRAM aprrox
     IMPLICIT none
     !Declaration of variables   
-    INTEGER :: i, numl
+    INTEGER :: i, numl,ios
     REAL :: x, y, x1, x2, y1, y2
     CHARACTER(LEN=100) :: filename
     REAL, DIMENSION(:,:), ALLOCATABLE :: table
 
-    !Reading the input table with the number of lines being speciied
-    !in the header (numl) and the variable x
+    !Counting the number of lines of the input file
     WRITE(*,*) "Name of your table file"
     READ(*,*) filename
     OPEN(1, file =filename, status="unknown")
-    READ(1,*) numl
-    ALLOCATE(table(1:numl,1:numl))
-    READ(1,*) (table(i,1) , table(i,2), i =1, numl)
+    numl = 0
+    DO
+    READ(1,*,IOSTAT = ios)
+    IF(ios/=0) EXIT
+    numl = numl +1
+    END DO
     CLOSE(1)
-    WRITE(*,*) "Table file succesfully loaded!"
+
+    !Reading the input file into an array
+    ALLOCATE(table(1:numl,1:2))
+    OPEN(2, file =filename, status="unknown")
+    DO i =1, numl
+        READ(2,*) table(i,1), table(i,2)
+    END DO
+    CLOSE(2)
+    WRITE(*,*) "Table file successfully loaded!"
     WRITE(*,*) "Value of x for the approximated function value:"
     READ(*,*) x
 
-    !Checking whether the x is within the range of the input table
+    !Checking whether x is within the range of the input table
     IF (table(1,1) >= x) THEN
         WRITE(*,*) "X-value is to small to be within the range of the input table. Program aborted!"
     ELSE IF (x>table(numl,1)) THEN
