@@ -80,7 +80,7 @@ MODULE equations
         deltat = 0.0
         dcoeff = 0.0
         OPEN(4, FILE = "velacc.xvg", IOSTAT = ios, STATUS = "UNKNOWN")
-        DO i = 1, (nframes/stepsize)+1
+        DO i = 1, endstep
         
             mp(i) = 0
             DO j = 1, nframes-deltat
