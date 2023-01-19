@@ -15,9 +15,11 @@ MODULE matrix
         nr = n
         
         DO i=1, n 
-            DO j=1, n 
-                a(i,j)= sin(2*pi*i*j/nr) 
+            DO j=i, n 
+                a(i,j)= sin(2*pi*i*j/nr)
+                a(j,i)= sin(2*pi*i*j/nr) 
                 b(i,j)= cos(2*pi*i*j/nr)
+                b(j,i)= cos(2*pi*i*j/nr)
              END DO
         END DO
     END SUBROUTINE makematrices
