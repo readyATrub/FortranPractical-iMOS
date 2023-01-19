@@ -1,51 +1,44 @@
 MODULE system
 
 PRIVATE 
-PUBLIC ::  system_mem_usage
+PUBLIC ::  system_mem
 
 CONTAINS
-! Code from: https://stackoverflow.com/questions
-!/22028571/track-memory-usage-in-fortran-90 
-! USER: NuclearFission
-subroutine system_mem_usage(valueRSS)
-    implicit none
-    !use ifport !if on intel compiler
-    integer, intent(out) :: valueRSS
-    
-    character(len=200):: filename=' '
-    character(len=80) :: line
-    character(len=8)  :: pid_char=' '
-    integer :: pid
+
+SUBROUTINE system_mem(memory)
+    IMPLICIT NONE
+    INTEGER :: memory, pid
+    CHARACTER(LEN=200):: filename
+    CHARACTER(LEN=80) :: line
+    CHARACTER(LEN=8)  :: pidchar
     logical :: ifxst
     
-    valueRSS=-1    ! return negative number if not found
-    
-    !--- get process ID
+    memory=-1
     
     pid=getpid()
-    write(pid_char,'(I8)') pid
-    filename='/proc/'//trim(adjustl(pid_char))//'/status'
+    WRITE(pidchar,'(I8)') pid
+    filename='/proc/'//trim(adjustl(pidchar))//'/status'
     
-    !--- read system file
+    INQUIRE (file=filename,exist=ifxst)
+    IF (.not.ifxst) THEN
+      WRITE (*,*) 'System file does not exist.'
+      RETURN
+    END IF
     
-    inquire (file=filename,exist=ifxst)
-    if (.not.ifxst) then
-      write (*,*) 'system file does not exist'
-      return
-    endif
+    OPEN(100, file=filename, action='read')
+
+    DO
+      READ (100,'(a)',end=120) line
+      IF (line(1:6).eq.'VmRSS:') then
+         READ (line(7:),*) memory
+         EXIT
+      END IF
+    END DO
+
+    120 CONTINUE
+    CLOSE(100)
     
-    open(unit=100, file=filename, action='read')
-    do
-      read (100,'(a)',end=120) line
-      if (line(1:6).eq.'VmRSS:') then
-         read (line(7:),*) valueRSS
-         exit
-      endif
-    enddo
-    120 continue
-    close(100)
-    
-    return
-    end subroutine system_mem_usage
+    RETURN
+  END SUBROUTINE system_mem
 
 END MODULE system
