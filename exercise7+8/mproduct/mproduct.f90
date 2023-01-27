@@ -42,7 +42,7 @@ PROGRAM mproduct
 
         CALL dummy(a,b,n)
         CALL CPU_TIME(end)
-        CALL system_mem_usage(memory)
+        CALL system_mem(memory)
         memoryr = memory/1000.0
 
         tra = trace(a,n)
@@ -55,17 +55,17 @@ PROGRAM mproduct
 
     IF(s=="4") THEN
 
-        PRINT '("Elapsed CPU time:",f10.4,x,"s -Used Memory:",f10.2,x,"MB")',end-start,memoryr
-        PRINT '("The first element of matrix a is",f10.4,x,&
-        "and its trace equals to",f10.4,x)',a(1,1),tra
-        PRINT '("The first element of matrix b is",f10.4,x,&
-        "and its trace equals to",f10.4,x)',b(1,1),trb
+        PRINT *, "Elapsed CPU time:",end-start,"s -Used Memory:",memoryr,"MB"
+        PRINT *, "The first element of matrix a is",a(1,1),&
+        "and its trace equals to",tra
+        PRINT *,"The first element of matrix b is",b(1,1),&
+        "and its trace equals to",trb
 
     ELSE
 
-        PRINT '("The first element of the matrix product is",f10.4,x,&
-        "and its trace equals to",f10.4,x)',c(1,1),tr
-        PRINT '("Elapsed CPU time:",f10.4,x,"s")',end-start
+        PRINT *,"The first element of the computed matrix c is",c(1,1),&
+        "and its trace equals to",tr
+        PRINT *, "Elapsed CPU time:",end-start,"s"
 
     END IF
 
