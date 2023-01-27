@@ -1,6 +1,6 @@
 MODULE potential
     PRIVATE
-    PUBLIC :: pot, f, tdf, tdf2
+    PUBLIC :: pot, f, df, df2
 
     CONTAINS 
 
@@ -18,19 +18,18 @@ MODULE potential
         force = -1.0*((-48.0*(x**(-13.0)))+(24.0*(x**(-7.0))))
     END FUNCTION f
 
-    FUNCTION tdf (x) result(tiderivf)
+    FUNCTION df (x) result(derivf)
         IMPLICIT NONE
         REAL, INTENT(IN) :: x
-        REAL :: tiderivf
-        !tiderivf = 24.0*(-26.0*(x**(-14.0))+7.0*(x**(-8.0)))
-        tiderivf = (-4*(((12*13)/(x**14))-((6*7)/(x**8))))
-    END FUNCTION tdf
+        REAL :: derivf
+        derivf = (-4*(((12*13)/(x**14))-((6*7)/(x**8))))
+    END FUNCTION df
 
-    FUNCTION tdf2 (x) result(tiderivf2)
+    FUNCTION df2 (x) result(derivf2)
         IMPLICIT NONE
         REAL, INTENT(IN) :: x
-        REAL :: tiderivf2
-        tiderivf2 = -672.0*((-13.0/x**(15.0))+(2/x**(9.0)))
-    END FUNCTION tdf2
+        REAL :: derivf2
+        derivf2 = -672.0*((-13.0/x**(15.0))+(2/x**(9.0)))
+    END FUNCTION df2
 
 END MODULE potential
