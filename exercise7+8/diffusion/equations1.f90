@@ -40,8 +40,6 @@ MODULE equations
                         
                 END DO
                 msd(i) = msd(i)+diff/(nmols*nsites)
-
-                WRITE(*,*) i,j,deltat
             END DO
 
             msd(i) = msd(i)/(nframes-deltat)
@@ -97,7 +95,6 @@ MODULE equations
                         
                 END DO
                 mp(i) = mp(i)+p/(nmols*nsites)
-                WRITE(*,*) i,j
             END DO
 
             mp(i) = mp(i)/(nframes-deltat)
