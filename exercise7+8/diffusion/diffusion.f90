@@ -10,49 +10,41 @@ PROGRAM diffusion
     REAL, DIMENSION(:,:,:), ALLOCATABLE :: inputr, inputv
     
     PRINT '("Enter trajectory file (in quotation marks):")'
-    !READ(*,*) filename
-    filename = "NVEtrj.gro"
+    READ(*,*) filename
     PRINT '("Enter number of water molecules:")'
-    !READ(*,*) nmols
-    nmols = 221
+    READ(*,*) nmols
     PRINT '("Enter number of sites:")'
-    !READ(*,*) nsites
-    nsites = 4
+    READ(*,*) nsites
     PRINT '("Enter number of time steps:")'
-    !READ(*,*) nsteps
-    nsteps = 50000
+    READ(*,*) nsteps
     PRINT '("Enter time step size:")'
-    !READ(*,*) dt
-    dt = 0.002
+    READ(*,*) dt
     PRINT '("Enter method of computation:")'
     PRINT '("(1 for Einstein)")'
     PRINT '("(2 for Green-Kubo)")'
-    !READ(*,*) s
-    s = "1"
+    READ(*,*) s
+    PRINT '("Enter start of fit:")'
+    READ(*,*) startf
+    PRINT '("Enter end of fit:")'
+    READ(*,*) endf
+    PRINT '("Enter Resolution of delta t:")'
+    READ (*,*) deltatres
 
     nframes = nsteps + 1
-    
-    PRINT '("Enter start of fit:")'
-    !READ(*,*) startf
-    startf = 0
-    PRINT '("Enter end of fit:")'
-    !READ(*,*) endf
-    endf = 50
-    PRINT '("Enter Resolution of delta t:")'
-    !READ (*,*) deltatres
-    deltatres = 0.1
 
     SELECT CASE(s)
         CASE("1")
 
             CALL readtrr(filename,nframes,nmols,nsites,inputr,inputv)
-            CALL einstein(nsteps,nframes,nmols,nsites,dt,inputr,startf,endf,deltatres,dcoeff)
+            CALL einstein(nsteps,nframes,nmols,nsites,&
+            dt,inputr,startf,endf,deltatres,dcoeff)
             PRINT*, "The diffusion constant is", dcoeff, "cm^2/s"
 
         CASE("2")
 
             CALL readtrr(filename,nframes,nmols,nsites,inputr,inputv)
-            CALL greenkubo(nsteps,nframes,nmols,nsites,dt,inputv,startf,endf,deltatres,dcoeff)
+            CALL greenkubo(nsteps,nframes,nmols,nsites,&
+            dt,inputv,startf,endf,deltatres,dcoeff)
             PRINT*, "The diffusion constant is", dcoeff, "cm^2/s"
 
         CASE DEFAULT 
