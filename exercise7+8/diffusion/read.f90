@@ -15,9 +15,9 @@ MODULE read
 
 
     
-        ALLOCATE(inputr(1:3,nmols*nsites,nframes),inputv(1:3,nmols*nsites,nframes))
+        ALLOCATE(inputr(1:3,nmols*nsites,nframes),&
+        inputv(1:3,nmols*nsites,nframes))
 
-        !OPEN(2, FILE = "test.xvg", IOSTAT = ios, STATUS = "UNKNOWN")
         OPEN(1, FILE = filename , STATUS = "OLD")
             
         DO i=1, nframes
@@ -30,7 +30,6 @@ MODULE read
 
                     READ(1,*,IOSTAT = ios) SOL, site, index, &
                     inputr(1:3,j,i) ,inputv(1:3,j,i)
-                    !WRITE(2,*,IOSTAT = ios) inputr(1:3,j,i),inputv(1:3,j,i)
             END DO
 
             READ(1,*,IOSTAT = ios)
